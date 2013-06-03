@@ -380,6 +380,11 @@ static struct notifier_block dload_reboot_block = {
 #ifdef CONFIG_KEXEC_HARDBOOT
 void msm_kexec_hardboot(void)
 {
+#if defined(CONFIG_MSM_DLOAD_MODE) && !defined(CONFIG_SEC_DEBUG)
+	/* Do not enter download mode on reboot. */
+	set_dload_mode(0);
+#endif
+
 	/* Set PM8XXX PMIC to reset on power off. */
 	pm8xxx_reset_pwr_off(1);
 
