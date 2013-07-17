@@ -1500,17 +1500,15 @@ static int mass_storage_function_init(struct android_usb_function *f,
 	else
 	config->fsg.nluns = 1;
 
+	if (dev->pdata && dev->pdata->cdrom) {
+		config->fsg.nluns++;
+		config->fsg.luns[0].cdrom = 1;
+		config->fsg.luns[0].ro = 0;	// Read /Write
+	}
+
 	for (i = 0; i < config->fsg.nluns; i++) {
 		name[i] = kasprintf(GFP_KERNEL, "lun%u", i);
 		config->fsg.luns[i].removable = 1;
-	}
-
-	if (dev->pdata && dev->pdata->cdrom) {
-		config->fsg.nluns++;
-		config->fsg.luns[i].cdrom = 1;
-		config->fsg.luns[i].ro = 0;	// Read /Write
-		config->fsg.luns[i].removable = 1;
-		name[i] = "lun";
 	}
 
 	common = fsg_common_init(NULL, cdev, &config->fsg);
